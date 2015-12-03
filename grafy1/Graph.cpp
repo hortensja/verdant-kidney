@@ -134,8 +134,7 @@ std::vector<Vertex> Graph::DFS(Vertex *v)
 
 	std::vector<Vertex> verticesFound;
 
-	this->clearColours();
-	this->clearDepths();
+	this->clearGraph();
 
 	dfsearchedVertices.push_back(*v);
 	mVerticesList[this->findVertex(v)].setVertexColour('d');
@@ -197,7 +196,6 @@ std::vector<Vertex> Graph::findArticulationPoints(Vertex *v, int depth, std::vec
 	}
 	if ((mVerticesList[this->findVertex(v)].getParent() != nullptr && isArticulationPoint) || (mVerticesList[this->findVertex(v)].getParent() == nullptr && numberOfChildren>1)) {
 		artPt.push_back(*v);
-		std::cout << artPt.back().getVertexNumber() << " found!" << std::endl;
 	}
 	return artPt;
 }

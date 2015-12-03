@@ -56,9 +56,11 @@ int main() {
 	}
 	//Graph g2 = (g->sortVerticesViaDFS(v[0]));
 	//g->sortVerticesViaDFS(v1).printVertices();
-	g->printVertices();
+	//g->printVertices();
 	//g->printEdges();
 	
+	g->findBiconnectedComponents();
+
 
 	system("pause");
 	return 0;

@@ -189,37 +189,104 @@ std::vector<Vertex> Graph::DFS(Vertex *v)
 
 std::vector<Vertex> Graph::findArticulationPoints(Vertex *v, int depth, std::vector<Vertex> artPt)
 {
-	mVerticesList[v->getVertexPosition()].setVertexColour('a');
-	mVerticesList[v->getVertexPosition()].setDepthInDFS(depth);
-	mVerticesList[v->getVertexPosition()].setLowpoint(depth);
+	int vPos = v->getVertexPosition();
+
+	mVerticesList[vPos].setVertexColour('a');
+	mVerticesList[vPos].setDepthInDFS(depth);
+	mVerticesList[vPos].setLowpoint(depth);
 
 	int numberOfChildren = 0;
 	bool isArticulationPoint = false;
-	std::cout << "First vertex : ";
-	mVerticesList[v->getVertexPosition()].printVertex();
+	std::cout << "Processing vertex : ";
+	mVerticesList[vPos].printVertex();
 	std::cout << std::endl;
 
 	for (auto it = mVerticesList.begin(); it != mVerticesList.end(); ++it) {
 		if (isConnectedDirectly(v, &(*it))) {
 			if (!((*it).getVertexColour())) {
+				//push(stack, u, v)
 				mVerticesList[it->getVertexPosition()].setParent(v);
 				artPt = findArticulationPoints(&(*it), depth + 1, artPt);
 				++numberOfChildren;
-				if ((*it).getLowpoint()>=mVerticesList[v->getVertexPosition()].getDepthInDFS()) {
+				if ((*it).getLowpoint()>=mVerticesList[vPos].getDepthInDFS()) {
 					isArticulationPoint = true;
+					//output
 				}
-				mVerticesList[v->getVertexPosition()].setLowpoint(SuerpMatemateka::min(mVerticesList[v->getVertexPosition()].getLowpoint(), mVerticesList[it->getVertexPosition()].getLowpoint()));
+				mVerticesList[vPos].setLowpoint(SuerpMatemateka::min(mVerticesList[vPos].getLowpoint(), mVerticesList[it->getVertexPosition()].getLowpoint()));
 			}
-			else if (mVerticesList[v->getVertexPosition()].getParent()!=nullptr && (*it).getVertexName() != mVerticesList[v->getVertexPosition()].getParent()->getVertexName()){
-				mVerticesList[v->getVertexPosition()].setLowpoint(SuerpMatemateka::min(mVerticesList[v->getVertexPosition()].getLowpoint(), mVerticesList[it->getVertexPosition()].getDepthInDFS()));
+			else if (mVerticesList[vPos].getParent()!=nullptr && (*it).getVertexName() != mVerticesList[vPos].getParent()->getVertexName()){
+				mVerticesList[vPos].setLowpoint(SuerpMatemateka::min(mVerticesList[vPos].getLowpoint(), mVerticesList[it->getVertexPosition()].getDepthInDFS()));
 			}
 		}
 	}
-	if ((mVerticesList[v->getVertexPosition()].getParent() != nullptr && isArticulationPoint) || (mVerticesList[v->getVertexPosition()].getParent() == nullptr && numberOfChildren>1)) {
+	if ((mVerticesList[vPos].getParent() != nullptr && isArticulationPoint) || (mVerticesList[vPos].getParent() == nullptr && numberOfChildren>1)) {
 		artPt.push_back(*v);
 	}
 	return artPt;
 }
+
+std::vector<Vertex> Graph::biCompSearch(Vertex *v, int depth, std::vector<Vertex> biComp)
+{
+	int vPos = v->getVertexPosition();
+
+	bool isOutputEligible = true;
+
+	mVerticesList[vPos].setVertexColour('b');
+	depth++;
+	mVerticesList[vPos].setDepthInDFS(depth);
+	mVerticesList[vPos].setLowpoint(depth);
+
+
+	for (auto it = mVerticesList.begin(); it != mVerticesList.end(); ++it) {
+		if (isConnectedDirectly(v, &(*it))) {
+			if (!((*it).getVertexColour())) {
+				biComp.push_back(*v);
+				biComp.push_back(*it);
+				mVerticesList[it->getVertexPosition()].setParent(v);
+				biComp = biCompSearch(&(*it), depth, biComp);
+				if ((*it).getLowpoint() >= mVerticesList[vPos].getDepthInDFS()) {
+					std::cout << "New biconnected component:\n";
+					if (!biComp.empty()) {
+						do {
+							biComp.back().printVertexNumber();
+							Vertex temp1 = biComp.back();
+							std::cout << "->";
+							biComp.pop_back();
+							biComp.back().printVertexNumber();
+							Vertex temp2 = biComp.back();
+							biComp.pop_back();
+							std::cout << "\t";
+							if ((temp1.getVertexName() == v->getVertexName() && temp2.getVertexName() == it->getVertexName()) || (temp1.getVertexName() == it->getVertexName() && temp2.getVertexName() == v->getVertexName())) {
+								isOutputEligible = false;
+							}
+						} while (isOutputEligible);
+					}
+					std::cout << std::endl;
+					
+				}
+				mVerticesList[vPos].setLowpoint(SuerpMatemateka::min(mVerticesList[vPos].getLowpoint(), mVerticesList[it->getVertexPosition()].getLowpoint()));
+			}
+			else if (!(v->getParent()==&(*it)) && (v->getDepthInDFS()>it->getDepthInDFS())) {
+				biComp.push_back(*v);
+				biComp.push_back(*it);
+				mVerticesList[vPos].setLowpoint(SuerpMatemateka::min(mVerticesList[vPos].getLowpoint(), mVerticesList[it->getVertexPosition()].getDepthInDFS()));
+			}
+		}
+	}
+	return biComp;
+}
+
+void Graph::findBiconnectedComponents()
+{
+	std::vector<Vertex> artPt;
+	std::vector<Vertex> biComp;
+	this->clearGraph();
+	for (auto it = mVerticesList.begin(); it != mVerticesList.end(); ++it) {
+		if (!(it->getVertexColour()))
+			biComp = biCompSearch(&(*it), -1, biComp);
+	}
+}
+
 
 
 Graph Graph::sortVerticesViaDFS(Vertex *v)

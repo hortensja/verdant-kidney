@@ -1,19 +1,20 @@
 #include "Vertex.h"
 
 #include <iostream>
+#include <string>
 
-Vertex::Vertex(int n)
+Vertex::Vertex(std::string n)
 {
-	mVertexNumber = n;
+	mVertexName = n;
 	mVertexColour = '\0';
 	mDepthInDFS = 0;
 	mLowpoint = 0;
 	mParent = nullptr;
 }
 
-Vertex::Vertex(int n, char c)
+Vertex::Vertex(std::string n, char c)
 {
-	mVertexNumber = n;
+	mVertexName = n;
 	mVertexColour = c;
 	mDepthInDFS = 0;
 	mLowpoint = 0;
@@ -25,9 +26,14 @@ Vertex::~Vertex()
 {
 }
 
-int Vertex::getVertexNumber()
+std::string Vertex::getVertexName()
 {
-	return mVertexNumber;
+	return mVertexName;
+}
+
+int Vertex::getVertexPosition()
+{
+	return mVertexPosition;
 }
 
 char Vertex::getVertexColour() {
@@ -59,6 +65,11 @@ void Vertex::setDepthInDFS(int d)
 	mDepthInDFS = d;
 }
 
+void Vertex::setVertexPosition(int p)
+{
+	mVertexPosition = p;
+}
+
 void Vertex::setVertexColour(char c)
 {
 	mVertexColour = c;
@@ -81,10 +92,10 @@ void Vertex::setNumberOfChildren(int n)
 
 void Vertex::printVertex()
 {
-	std::cout << mVertexNumber << " , coloured " << mVertexColour << " , depth: " << mDepthInDFS << " , low = " << mLowpoint;
+	std::cout << mVertexName << " , coloured " << mVertexColour << " , depth: " << mDepthInDFS << " , low = " << mLowpoint << " , pos=" << mVertexPosition;
 }
 
 void Vertex::printVertexNumber()
 {
-	std::cout << this->mVertexNumber;
+	std::cout << this->mVertexName;
 }

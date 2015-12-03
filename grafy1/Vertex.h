@@ -1,12 +1,16 @@
 #pragma once
+
+#include <iostream>
+
 class Vertex
 {
 public:
-	Vertex(int n);
-	Vertex(int n, char c);
+	Vertex(std::string n);
+	Vertex(std::string n, char c);
 	~Vertex();
 	
-	int getVertexNumber();
+	std::string getVertexName();
+	int getVertexPosition();
 	char getVertexColour();
 	int getDepthInDFS();
 	int getLowpoint();
@@ -15,6 +19,7 @@ public:
 
 
 	void setDepthInDFS(int d);
+	void setVertexPosition(int p);
 	void setVertexColour(char c);
 	void setLowpoint(int l);
 	void setParent(Vertex *v);
@@ -25,7 +30,8 @@ public:
 
 
 protected:
-	int mVertexNumber;
+	std::string mVertexName;
+	int mVertexPosition;
 	char mVertexColour;
 	int mDepthInDFS;
 	int mLowpoint;

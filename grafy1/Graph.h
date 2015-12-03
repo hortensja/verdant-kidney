@@ -15,10 +15,12 @@ public:
 	int getNumberOfEdges();
 
 	int findVertex(Vertex *v);
+	int findVertex(std::string s);
 	bool isConnectedDirectly(Vertex *v1, Vertex *v2);
 
 	void addVertex(Vertex *v);
 	void addEdge(Vertex *v1, Vertex *v2);
+	void addEdge(std::string s1, std::string s2);
 
 	void printVertices();
 	void printEdges();
